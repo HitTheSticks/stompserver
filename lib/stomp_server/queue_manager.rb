@@ -180,10 +180,11 @@ class QueueManager
     end
 
     # Look for a user with ack (we favor reliability)
-    reliable_user = available_users.find{|u| u.ack}
+    reliable_users = available_users.find_all{|u| u.ack}
 
-    if reliable_user
+    if !reliable_users.empty?
       # give it a message-id
+      reliable_user = reliable_users[rand(reliable_users.length)]
       @qstore.assign_id(frame, dest)
       send_to_user(frame, reliable_user)
     else
